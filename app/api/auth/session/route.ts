@@ -1,13 +1,16 @@
 // app/api/auth/session/route.ts
 import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
 import { getUserFromToken } from '@/lib/services/auth';
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
-    // In Next 15 (Node/Webpack), cookies() is synchronous
-    const cookieStore = cookies();
-    const token = cookieStore.get('sb')?.value ?? null;
+    // In Node runtime, use the request headers to get cookies
+    const cookieHeader = req.headers.get('cookie') ?? '';
+    const token = cookieHeader
+      .split(';')
+      .map(v => v.trim())
+      .find(v => v.startsWith('sb='))
+      ?.split('=')[1] ?? null;
 
     const { user, error } = await getUserFromToken(token);
 
