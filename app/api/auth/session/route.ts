@@ -5,8 +5,8 @@ import { getUserFromToken } from '@/lib/services/auth';
 
 export async function GET() {
   try {
-    // In Next 15 route handlers, cookies() returns a Promise
-    const cookieStore = await cookies();
+    // In Next 15 (Node/Webpack), cookies() is synchronous
+    const cookieStore = cookies();
     const token = cookieStore.get('sb')?.value ?? null;
 
     const { user, error } = await getUserFromToken(token);
